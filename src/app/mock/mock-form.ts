@@ -11,7 +11,7 @@ export const FORM_LABELS = {
   name: 'Имя',
   email: 'Email',
   mobile: 'Телефон',
-  location: 'Город'
+  location: 'Местоположение'
 };
 
 export const FORM_PLACEHOLDERS = {

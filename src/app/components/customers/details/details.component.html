@@ -1,4 +1,5 @@
-<h3>Форма добавления клиента</h3>
+<h3 *ngIf="!firestoreService.editingCustomer()">Добавления клиента</h3>
+<h3 *ngIf="firestoreService.editingCustomer()">Редактирование клиента</h3>
 
 <form (ngSubmit)="onSubmit()" [formGroup]="form">
 
@@ -23,8 +24,11 @@
   </div>
 
   <div class="mb-3">
-    <button [disabled]="firestoreService.addingCustomer()" class="btn btn-info" type="submit">
-      {{ firestoreService.addingCustomer() ? 'Добавление...' : 'Добавить' }}
+    <button class="btn btn-info" type="submit">
+      {{ firestoreService.editingCustomer() ? 'Обновить клиента' : 'Добавить клиента' }}
+    </button>
+    <button (click)="cancelEditing()" *ngIf="firestoreService.editingCustomer()" class="btn btn-secondary ms-2" type="button">
+      Отмена
     </button>
   </div>
 

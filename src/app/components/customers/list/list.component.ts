@@ -1,6 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FirestoreService} from '../../../services/firestore.service';
 import {NgForOf, NgTemplateOutlet} from '@angular/common';
+import {CustomerInterface} from '../../../types/customer.interface';
 
 @Component({
   selector: 'app-list',
@@ -18,5 +19,18 @@ export class ListComponent implements OnInit {
 
   ngOnInit() {
     this.firestoreService.getCustomersList();
+  }
+
+  editCustomer(customer: CustomerInterface, id: string): void {
+    this.firestoreService.startEditingCustomer(customer, id);
+  }
+
+  cancelEdit(): void {
+  }
+
+  saveCustomer(): void {
+  }
+
+  deleteCustomer(): void {
   }
 }
