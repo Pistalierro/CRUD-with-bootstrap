@@ -1,1 +1,31 @@
-<p>details works!</p>
+<h3>Форма добавления клиента</h3>
+
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+
+  <div class="mb-3">
+    <label class="form-label" for="name">{{ formLabels.name }}</label>
+    <input class="form-control" formControlName="name" id="name" placeholder="{{formPlaceholders.name}}" type="text">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="email">{{ formLabels.email }}</label>
+    <input class="form-control" formControlName="email" id="email" placeholder="{{formPlaceholders.email}}" type="email">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="mobile">{{ formLabels.mobile }}</label>
+    <input class="form-control" formControlName="mobile" id="mobile" placeholder="{{formPlaceholders.mobile}}" type="text">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="location">{{ formLabels.location }}</label>
+    <input class="form-control" formControlName="location" id="location" placeholder="{{formPlaceholders.location}}" type="text">
+  </div>
+
+  <div class="mb-3">
+    <button [disabled]="firestoreService.addingCustomer()" class="btn btn-info" type="submit">
+      {{ firestoreService.addingCustomer() ? 'Добавление...' : 'Добавить' }}
+    </button>
+  </div>
+
+</form>
