@@ -21,6 +21,7 @@
     <th scope="col">Email</th>
     <th scope="col">Телефон</th>
     <th scope="col">Город</th>
+    <th scope="col">Добавлен</th>
     <th scope="col">Управление</th>
   </tr>
   </thead>
@@ -31,17 +32,14 @@
   <td class="align-middle">{{ customer.email }}</td>
   <td class="align-middle">{{ customer.mobile }}</td>
   <td class="align-middle">{{ customer.location }}</td>
+  <td class="align-middle">{{ customer.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
 </ng-template>
 
 <ng-template #controlsBlock let-customer>
   <td class="controls align-middle">
     <button (click)="editCustomer(customer, customer.id)"
-            class="btn btn-secondary btn-sm ms-1"><i class="fa-solid fa-user-pen"></i></button>
-    <button (click)="cancelEdit()"
-            class="btn btn-primary btn-sm ms-1"><i class="fa-solid fa-rotate-left"></i></button>
-    <button (click)="saveCustomer()"
-            class="btn btn-success btn-sm ms-1"><i class="fa-solid fa-floppy-disk"></i></button>
-    <button (click)="deleteCustomer()"
+            class="btn btn-success btn-sm ms-1"><i class="fa-solid fa-user-pen"></i></button>
+    <button (click)="deleteCustomer(customer.id)"
             class="btn btn-danger btn-sm ms-1"><i class="fa-solid fa-delete-left"></i></button>
   </td>
 </ng-template>

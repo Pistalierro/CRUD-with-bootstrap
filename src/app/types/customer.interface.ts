@@ -4,4 +4,5 @@ export interface CustomerInterface {
   email: string;
   mobile: string;
   location: string;
+  createdAt?: any;
 }

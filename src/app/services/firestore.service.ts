@@ -1,5 +1,5 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {addDoc, collection, doc, Firestore, onSnapshot, updateDoc} from '@angular/fire/firestore';
+import {addDoc, collection, deleteDoc, doc, Firestore, onSnapshot, orderBy, query, Timestamp, updateDoc} from '@angular/fire/firestore';
 import {CustomerInterface} from '../types/customer.interface';
 
 @Injectable({
@@ -17,7 +17,8 @@ export class FirestoreService {
   async createCustomer(customer: CustomerInterface): Promise<void> {
     this.addingCustomer.set(true);
     try {
-      await addDoc(this.customersListCollection, customer);
+      const newCustomer = {...customer, createdAt: Timestamp.now()};
+      await addDoc(this.customersListCollection, newCustomer);
       console.log('Пользователь успешно добавлен');
     } catch (error) {
       console.error('Ошибка при добавлении данных пользователя:', error);
@@ -38,11 +39,26 @@ export class FirestoreService {
     }
   }
 
+  async deleteCustomer(id: string): Promise<void> {
+    try {
+      const customerDoc = doc(this.firestore, `customersList/${id}`);
+      await deleteDoc(customerDoc);
+      console.log(`Клиент с ID ${id} успешно удалён`);
+    } catch (error) {
+      console.error(`Ошибка при удалении клиента с ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   getCustomersList(): void {
-    onSnapshot(this.customersListCollection, (snapshot) => {
+    const customerQuery = query(this.customersListCollection, orderBy('createdAt', 'asc'));
+
+    onSnapshot(customerQuery, (snapshot) => {
       const customers = snapshot.docs.map((doc) => {
         const data = doc.data() as CustomerInterface;
-        return {id: doc.id, ...data};
+        return {
+          id: doc.id, ...data, createdAt: data.createdAt ? data.createdAt.toDate() : new Date(0),
+        };
       });
       this.customersList.set(customers);
     }, (error) => {
@@ -52,7 +68,6 @@ export class FirestoreService {
 
 
   startEditingCustomer(customer: CustomerInterface, id: string): void {
-    console.log('Редактирование клиента:', customer, 'с ID:', id);
     this.editingCustomer.set(customer);
     this.editingCustomerId.set(id);
   }
