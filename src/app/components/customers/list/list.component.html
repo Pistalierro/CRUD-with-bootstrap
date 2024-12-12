@@ -1,1 +1,34 @@
 <h3>Список всех клиентов</h3>
+
+<table class="table table-striped table-hover">
+
+  <ng-container *ngTemplateOutlet="tHeadBlock"></ng-container>
+
+  <tbody class="table-group-divider">
+  <tr *ngFor="let customer of firestoreService.customersList() let i = index">
+    <th scope="row">{{ i + 1 }}</th>
+
+    <ng-container *ngTemplateOutlet="tBodyBlock; context: {$implicit: customer}"></ng-container>
+
+  </tr>
+  </tbody>
+</table>
+
+<ng-template #tHeadBlock>
+  <thead class="table-light">
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Имя</th>
+    <th scope="col">Email</th>
+    <th scope="col">Телефон</th>
+    <th scope="col">Город</th>
+  </tr>
+  </thead>
+</ng-template>
+
+<ng-template #tBodyBlock let-customer>
+  <td>{{ customer.name }}</td>
+  <td>{{ customer.email }}</td>
+  <td>{{ customer.mobile }}</td>
+  <td>{{ customer.location }}</td>
+</ng-template>

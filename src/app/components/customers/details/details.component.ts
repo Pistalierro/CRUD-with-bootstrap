@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FirestoreService} from '../../../services/firestore.service';
-import {FORM_LABELS, FORM_PLACEHOLDERS} from '../../../mock/mock-form';
+import {DEFAULT_CUSTOMER, FORM_LABELS, FORM_PLACEHOLDERS} from '../../../mock/mock-form';
 
 @Component({
   selector: 'app-details',
@@ -25,11 +25,12 @@ export class DetailsComponent implements OnInit {
 
   initializeForm(): void {
     this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(6)]],
+      name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.minLength(9)]],
       location: ['', [Validators.required]],
     });
+    this.setControlValue();
   }
 
   onSubmit(): void {
@@ -38,4 +39,6 @@ export class DetailsComponent implements OnInit {
       this.form.reset();
     }
   }
+
+  private setControlValue = () => this.form.patchValue(DEFAULT_CUSTOMER);
 }

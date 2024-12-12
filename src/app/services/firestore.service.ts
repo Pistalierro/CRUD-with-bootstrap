@@ -7,7 +7,7 @@ import {CustomerInterface} from '../types/customer.interface';
   providedIn: 'root'
 })
 export class FirestoreService {
-  
+
   customersList = signal<CustomerInterface[]>([]);
   addingCustomer = signal<boolean>(false);
 
@@ -34,8 +34,7 @@ export class FirestoreService {
         const {name, email, mobile, location} = doc.data();
         return {name, email, mobile, location} as CustomerInterface;
       });
-      this.customersList.set(customers); // Обновляем сигнал с данными
-      console.log('Список клиентов обновлен:', customers);
+      this.customersList.set(customers);
     }, (error) => {
       console.error('Ошибка при получении данных клиентов:', error);
     });

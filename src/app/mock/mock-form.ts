@@ -1,3 +1,12 @@
+import {CustomerInterface} from '../types/customer.interface';
+
+export const DEFAULT_CUSTOMER: CustomerInterface = {
+  name: 'Default Name',
+  email: 'default@email.com',
+  mobile: '987654321',
+  location: 'Default Location',
+};
+
 export const FORM_LABELS = {
   name: 'Имя',
   email: 'Email',
