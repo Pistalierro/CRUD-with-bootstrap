@@ -1,14 +1,16 @@
-import {Component, effect, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
+import {Component, effect, OnInit, signal} from '@angular/core';
+import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FirestoreService} from '../../../services/firestore.service';
-import {FORM_ERRORS, FORM_LABELS, FORM_PLACEHOLDERS, VALIDATION_MESSAGES} from '../../../mock/mock-form';
-import {NgIf} from '@angular/common';
+import {FORM_FIELDS, FORM_LABELS, FORM_PLACEHOLDERS, VALIDATION_MESSAGES} from '../../../mock/mock-form';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-details',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    NgForOf,
+    NgClass,
     NgIf
   ],
   templateUrl: './details.component.html',
@@ -16,11 +18,16 @@ import {NgIf} from '@angular/common';
 })
 export class DetailsComponent implements OnInit {
   form!: FormGroup;
+  formFields = FORM_FIELDS;
   formLabels = FORM_LABELS;
   formPlaceholders = FORM_PLACEHOLDERS;
-  formErrors: any = FORM_ERRORS;
-  validationMessages: any = VALIDATION_MESSAGES;
 
+  validationMessages = signal<Record<string, string>>({
+    name: '',
+    email: '',
+    mobile: '',
+    location: ''
+  });
 
   constructor(public firestoreService: FirestoreService, private fb: FormBuilder) {
     effect(() => {
@@ -35,7 +42,6 @@ export class DetailsComponent implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
-    console.log(this.form);
   }
 
   onSubmit(): void {
@@ -62,17 +68,32 @@ export class DetailsComponent implements OnInit {
     this.firestoreService.stopEditingCustomer();
   }
 
-  setValidationMessage(): void {
-    Object.keys(this.formErrors).forEach((filed: string) => {
-      const control = this.form.get(filed);
-      this.formErrors[filed] = '';
+  setValidationMessage(field: string): void {
+    const control = this.form.get(field);
+    control?.markAsTouched();
+    if ((control?.dirty || control?.touched) && control.errors) {
+      const errorKey = Object.keys(control.errors)[0];
+      this.validationMessages.set({
+        ...this.validationMessages(),
+        [field]: VALIDATION_MESSAGES[field][errorKey] || ''
+      });
+    }
+  }
 
-      if ((control?.dirty || control?.touched) && control.invalid) {
-        const messages = this.validationMessages[filed];
-
-        Object.keys(control.errors as ValidationErrors).some(key => this.formErrors[filed] = messages[key]);
+  updateValidationMessages(): void {
+    const errors: { name: string; email: string; mobile: string; location: string } = {name: '', email: '', mobile: '', location: ''};
+    (Object.keys(errors) as Array<keyof typeof errors>).forEach((field) => {
+      const control = this.form.get(field);
+      if (control && control.errors && (control.dirty || control.touched)) {
+        const errorKey = Object.keys(control.errors)[0];
+        errors[field] = VALIDATION_MESSAGES[field][errorKey] || '';
       }
     });
+    this.validationMessages.set(errors);
+  }
+
+  getFormControl(fieldName: string): AbstractControl | null {
+    return this.form.get(fieldName);
   }
 
   private initializeForm(): void {
@@ -82,6 +103,6 @@ export class DetailsComponent implements OnInit {
       mobile: ['', [Validators.required, Validators.minLength(10)]],
       location: ['', [Validators.required]],
     });
-    this.form.valueChanges.subscribe(() => this.setValidationMessage());
+    this.form.valueChanges.subscribe(() => this.updateValidationMessages());
   }
 }

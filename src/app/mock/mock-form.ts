@@ -1,12 +1,3 @@
-import {CustomerInterface} from '../types/customer.interface';
-
-export const DEFAULT_CUSTOMER: CustomerInterface = {
-  name: 'Default Name',
-  email: 'default@email.com',
-  mobile: '987654321',
-  location: 'Default Location',
-};
-
 export const FORM_LABELS = {
   name: 'Имя',
   email: 'Email',
@@ -28,7 +19,13 @@ export const FORM_ERRORS = {
   location: '',
 };
 
-export const VALIDATION_MESSAGES = {
+export interface ValidationMessages {
+  [field: string]: {
+    [errorType: string]: string;
+  };
+}
+
+export const VALIDATION_MESSAGES: ValidationMessages = {
   name: {
     required: 'Имя обязательно',
     minlength: 'Имя должно содержать минимум 6 символов'
@@ -45,3 +42,17 @@ export const VALIDATION_MESSAGES = {
     required: 'Локация обязательна'
   }
 };
+
+type FormField = {
+  name: string
+  label: string;
+  placeholder: string;
+  type: string;
+};
+
+export const FORM_FIELDS: FormField[] = [
+  {name: 'name', label: FORM_LABELS.name, placeholder: FORM_PLACEHOLDERS.name, type: 'text'},
+  {name: 'email', label: FORM_LABELS.email, placeholder: FORM_PLACEHOLDERS.email, type: 'email'},
+  {name: 'mobile', label: FORM_LABELS.mobile, placeholder: FORM_PLACEHOLDERS.mobile, type: 'text'},
+  {name: 'location', label: FORM_LABELS.location, placeholder: FORM_PLACEHOLDERS.location, type: 'text'}
+];
