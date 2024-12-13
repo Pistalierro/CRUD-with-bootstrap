@@ -1,27 +1,50 @@
 <h3>Список всех клиентов</h3>
 
-<table class="table table-striped table-hover">
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <ng-container *ngTemplateOutlet="tHeadBlock"></ng-container>
+    <tbody class="table-group-divider">
+    <tr *ngFor="let customer of firestoreService.customersList() let i = index">
+      <th class="align-middle" scope="row">{{ i + 1 }}</th>
+      <ng-container *ngTemplateOutlet="tBodyBlock; context: {$implicit: customer}"></ng-container>
+      <ng-container *ngTemplateOutlet="controlsBlock; context: {$implicit: customer}"></ng-container>
+    </tr>
+    </tbody>
+  </table>
+</div>
 
-  <ng-container *ngTemplateOutlet="tHeadBlock"></ng-container>
+<div *ngIf="isMobile" class="d-block d-sm-none">
+  <div *ngFor="let customer of firestoreService.customersList()" class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ customer.name }}</h5>
+      <p class="card-text">
+        <strong>Телефон:</strong> {{ customer.mobile }}<br>
+        <strong>Email:</strong> {{ customer.email }}<br>
+        <strong>Город:</strong> {{ customer.location }}<br>
+        <strong>Добавлен:</strong> {{ customer.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}
+      </p>
+      <div class="d-flex">
+        <button (click)="editCustomer(customer, customer.id)" *ngIf="customer.id" class="btn btn-secondary btn-sm me-2">
+          <i class="fa-solid fa-user-pen"></i> Редактировать
+        </button>
+        <button (click)="deleteCustomer(customer.id)" *ngIf="customer.id" class="btn btn-danger btn-sm">
+          <i class="fa-solid fa-delete-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <tbody class="table-group-divider">
-  <tr *ngFor="let customer of firestoreService.customersList() let i = index">
-    <th class="align-middle" scope="row">{{ i + 1 }}</th>
-    <ng-container *ngTemplateOutlet="tBodyBlock; context: {$implicit: customer}"></ng-container>
-    <ng-container *ngTemplateOutlet="controlsBlock; context: {$implicit: customer}"></ng-container>
-  </tr>
-  </tbody>
-</table>
 
 <ng-template #tHeadBlock>
   <thead class="table-light">
   <tr>
     <th scope="col">#</th>
     <th scope="col">Имя</th>
-    <th scope="col">Email</th>
+    <th class="d-none d-sm-table-cell" scope="col">Email</th> <!-- Скрываем на xs -->
     <th scope="col">Телефон</th>
-    <th scope="col">Город</th>
-    <th scope="col">Добавлен</th>
+    <th class="d-none d-md-table-cell" scope="col">Город</th> <!-- Скрываем на xs/sm -->
+    <th class="d-none d-lg-table-cell" scope="col">Добавлен</th> <!-- Скрываем на xs/sm/md -->
     <th scope="col">Управление</th>
   </tr>
   </thead>
@@ -29,16 +52,17 @@
 
 <ng-template #tBodyBlock let-customer>
   <td class="align-middle">{{ customer.name }}</td>
-  <td class="align-middle">{{ customer.email }}</td>
+  <td class="align-middle d-none d-sm-table-cell">{{ customer.email }}</td>
   <td class="align-middle">{{ customer.mobile }}</td>
-  <td class="align-middle">{{ customer.location }}</td>
-  <td class="align-middle">{{ customer.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
+  <td class="align-middle d-none d-md-table-cell">{{ customer.location }}</td>
+  <td class="align-middle d-none d-lg-table-cell">{{ customer.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
 </ng-template>
+
 
 <ng-template #controlsBlock let-customer>
   <td class="controls align-middle">
     <button (click)="editCustomer(customer, customer.id)"
-            class="btn btn-success btn-sm ms-1"><i class="fa-solid fa-user-pen"></i></button>
+            class="btn btn-secondary btn-sm ms-1"><i class="fa-solid fa-user-pen"></i></button>
     <button (click)="deleteCustomer(customer.id)"
             class="btn btn-danger btn-sm ms-1"><i class="fa-solid fa-delete-left"></i></button>
   </td>

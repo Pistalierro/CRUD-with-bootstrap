@@ -1,0 +1,23 @@
+<div class="flip-card pb-3">
+  <div class="flip-card-inner">
+    <!-- Передняя сторона -->
+    <div class="flip-card-front card p-3 bg-light">
+      <h5 class="text-center mb-2">Функционал и инструкция</h5>
+      <ul class="list-group p-0 border rounded">
+        <li *ngFor="let feature of features" class="list-group-item border-0">
+          <i class="fa-solid fa-check text-success me-2"></i> {{ feature }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Задняя сторона -->
+    <div class="flip-card-back card p-3 bg-light">
+      <h5 class="text-center mb-2">Технологии и инструменты</h5>
+      <ul class="list-group p-0 border rounded">
+        <li *ngFor="let tech of technologies" class="list-group-item border-0">
+          <i class="fa-solid fa-check text-primary me-2"></i> {{ tech }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+.flip-card {
+  perspective: 1000px; /* Для реалистичного 3D-эффекта */
+  width: 100%; /* Подгоняем под ширину контейнера */
+  max-width: 500px;
+  min-height: 400px;
+  margin: auto;
+
+  &-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  &:hover {
+    .flip-card-inner {
+      transform: rotateY(180deg); /* Анимация переворота */
+    }
+
+    .flip-card-back {
+      background-color: #e9ecef; /* Более светлый серый */
+    }
+  }
+
+  &-front,
+  &-back {
+    position: absolute;
+    backface-visibility: hidden; /* Скрываем обратную сторону */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  &-front {
+    background-color: #f8f9fa; /* Светло-серый фон */
+  }
+
+  &-back {
+    background-color: #f8f9fa; /* Светло-серый фон */
+    transform: rotateY(180deg);
+  }
+}

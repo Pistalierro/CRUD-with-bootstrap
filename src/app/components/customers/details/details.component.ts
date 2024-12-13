@@ -63,7 +63,6 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-
   cancelEditing(): void {
     this.firestoreService.stopEditingCustomer();
   }

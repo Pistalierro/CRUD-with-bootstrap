@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FirestoreService} from '../../../services/firestore.service';
-import {DatePipe, NgForOf, NgTemplateOutlet} from '@angular/common';
+import {DatePipe, NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
 import {CustomerInterface} from '../../../types/customer.interface';
 
 @Component({
@@ -9,7 +9,8 @@ import {CustomerInterface} from '../../../types/customer.interface';
   imports: [
     NgForOf,
     NgTemplateOutlet,
-    DatePipe
+    DatePipe,
+    NgIf
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -17,6 +18,14 @@ import {CustomerInterface} from '../../../types/customer.interface';
 export class ListComponent implements OnInit {
 
   firestoreService = inject(FirestoreService);
+
+  isMobile = window.innerWidth < 576;
+
+  constructor() {
+    window.addEventListener('resize', () => {
+      this.isMobile = window.innerWidth < 576;
+    });
+  }
 
   ngOnInit() {
     this.firestoreService.getCustomersList();
