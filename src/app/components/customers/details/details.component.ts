@@ -17,7 +17,7 @@ import {NgClass, NgForOf, NgIf} from '@angular/common';
   styleUrl: './details.component.scss'
 })
 export class DetailsComponent implements OnInit {
-  form!: FormGroup;
+  customerForm!: FormGroup;
   formFields = FORM_FIELDS;
   formLabels = FORM_LABELS;
   formPlaceholders = FORM_PLACEHOLDERS;
@@ -33,11 +33,15 @@ export class DetailsComponent implements OnInit {
     effect(() => {
       const customer = this.firestoreService.editingCustomer();
       if (customer) {
-        this.form.patchValue(customer);
+        this.customerForm.patchValue(customer);
       } else {
-        this.form.reset();
+        this.customerForm.reset();
       }
     });
+  }
+
+  form(fieldName: string): AbstractControl | null {
+    return this.customerForm.get(fieldName);
   }
 
   ngOnInit() {
@@ -45,20 +49,20 @@ export class DetailsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
+    if (this.customerForm.valid) {
       const editingCustomerId = this.firestoreService.editingCustomerId();
       if (editingCustomerId) {
         this.firestoreService
-          .updateCustomer(editingCustomerId, this.form.value)
+          .updateCustomer(editingCustomerId, this.customerForm.value)
           .then(() => {
             console.log('Клиент успешно обновлён');
             this.firestoreService.stopEditingCustomer();
 
           });
       } else {
-        this.firestoreService.createCustomer(this.form.value).then(() => {
+        this.firestoreService.createCustomer(this.customerForm.value).then(() => {
           console.log('Клиент успешно добавлен');
-          this.form.reset();
+          this.customerForm.reset();
         });
       }
     }
@@ -69,7 +73,7 @@ export class DetailsComponent implements OnInit {
   }
 
   setValidationMessage(field: string): void {
-    const control = this.form.get(field);
+    const control = this.customerForm.get(field);
     control?.markAsTouched();
     if ((control?.dirty || control?.touched) && control.errors) {
       const errorKey = Object.keys(control.errors)[0];
@@ -83,7 +87,7 @@ export class DetailsComponent implements OnInit {
   updateValidationMessages(): void {
     const errors: { name: string; email: string; mobile: string; location: string } = {name: '', email: '', mobile: '', location: ''};
     (Object.keys(errors) as Array<keyof typeof errors>).forEach((field) => {
-      const control = this.form.get(field);
+      const control = this.customerForm.get(field);
       if (control && control.errors && (control.dirty || control.touched)) {
         const errorKey = Object.keys(control.errors)[0];
         errors[field] = VALIDATION_MESSAGES[field][errorKey] || '';
@@ -92,17 +96,13 @@ export class DetailsComponent implements OnInit {
     this.validationMessages.set(errors);
   }
 
-  getFormControl(fieldName: string): AbstractControl | null {
-    return this.form.get(fieldName);
-  }
-
   private initializeForm(): void {
-    this.form = this.fb.group({
+    this.customerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(6)]],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.minLength(10)]],
       location: ['', [Validators.required]],
     });
-    this.form.valueChanges.subscribe(() => this.updateValidationMessages());
+    this.customerForm.valueChanges.subscribe(() => this.updateValidationMessages());
   }
 }
