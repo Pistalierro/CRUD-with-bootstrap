@@ -1,7 +1,7 @@
 import {Component, effect, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
 import {FirestoreService} from '../../../services/firestore.service';
-import {FORM_LABELS, FORM_PLACEHOLDERS} from '../../../mock/mock-form';
+import {FORM_ERRORS, FORM_LABELS, FORM_PLACEHOLDERS, VALIDATION_MESSAGES} from '../../../mock/mock-form';
 import {NgIf} from '@angular/common';
 
 @Component({
@@ -18,6 +18,9 @@ export class DetailsComponent implements OnInit {
   form!: FormGroup;
   formLabels = FORM_LABELS;
   formPlaceholders = FORM_PLACEHOLDERS;
+  formErrors: any = FORM_ERRORS;
+  validationMessages: any = VALIDATION_MESSAGES;
+
 
   constructor(public firestoreService: FirestoreService, private fb: FormBuilder) {
     effect(() => {
@@ -32,15 +35,7 @@ export class DetailsComponent implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
-  }
-
-  initializeForm(): void {
-    this.form = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      mobile: ['', [Validators.required, Validators.minLength(9)]],
-      location: ['', [Validators.required]],
-    });
+    console.log(this.form);
   }
 
   onSubmit(): void {
@@ -65,5 +60,28 @@ export class DetailsComponent implements OnInit {
 
   cancelEditing(): void {
     this.firestoreService.stopEditingCustomer();
+  }
+
+  setValidationMessage(): void {
+    Object.keys(this.formErrors).forEach((filed: string) => {
+      const control = this.form.get(filed);
+      this.formErrors[filed] = '';
+
+      if ((control?.dirty || control?.touched) && control.invalid) {
+        const messages = this.validationMessages[filed];
+
+        Object.keys(control.errors as ValidationErrors).some(key => this.formErrors[filed] = messages[key]);
+      }
+    });
+  }
+
+  private initializeForm(): void {
+    this.form = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['', [Validators.required, Validators.email]],
+      mobile: ['', [Validators.required, Validators.minLength(10)]],
+      location: ['', [Validators.required]],
+    });
+    this.form.valueChanges.subscribe(() => this.setValidationMessage());
   }
 }
