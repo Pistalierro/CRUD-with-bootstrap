@@ -6,6 +6,7 @@
            [ngClass]="{'is-valid':   form(field.name)?.valid,
                        'is-invalid': form(field.name)?.invalid &&(form(field.name)?.dirty || form(field.name)?.touched)}"
            [placeholder]="field.placeholder" [type]="field.type" class="form-control"/>
+    <div *ngIf="form(field.name)?.valid" class="valid-feedback">Принято!</div>
     <div *ngIf="validationMessages()[field.name]" class="invalid-feedback">
       {{ validationMessages()[field.name] }}
     </div>

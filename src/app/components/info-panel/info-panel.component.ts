@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {NgForOf} from '@angular/common';
+import {FEATURES, TECHNOLOGIES} from '../../mock/mock-info';
 
 @Component({
   selector: 'app-info-panel',
@@ -11,21 +12,6 @@ import {NgForOf} from '@angular/common';
   styleUrl: './info-panel.component.scss'
 })
 export class InfoPanelComponent {
-  features: string[] = [
-    'Добавление клиента с обязательными полями: имя, email, телефон и город.',
-    'Редактирование данных клиента прямо в форме.',
-    'Удаление клиента из базы данных.',
-    'Все данные автоматически обновляются в списке в реальном времени.',
-    'Валидация формы с помощью TypeScript',
-    'Поддержка адаптивного интерфейса для работы на мобильных устройствах.',
-  ];
-
-  technologies: string[] = [
-    'Angular — фреймворк для создания одностраничного приложения.',
-    'Signals — для реактивного управления состоянием данных.',
-    'RxJS — для работы с потоками данных и событий.',
-    'Bootstrap 5.3.3 — для адаптивной верстки и стилизации интерфейса.',
-    'Font Awesome — для иконок в интерфейсе.',
-    'Firebase Firestore — для хранения данных клиентов.',
-  ];
+  features: string[] = FEATURES;
+  technologies: string[] = TECHNOLOGIES;
 }
