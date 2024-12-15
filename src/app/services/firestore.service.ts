@@ -1,7 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {addDoc, collection, deleteDoc, doc, Firestore, onSnapshot, orderBy, query, Timestamp, updateDoc} from '@angular/fire/firestore';
 import {CustomerInterface} from '../types/customer.interface';
-import {ErrorSignalService} from './error-signal.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +13,6 @@ export class FirestoreService {
 
   private firestore = inject(Firestore);
   private customersListCollection = collection(this.firestore, 'customersList');
-  private errorService = inject(ErrorSignalService);
 
   async createCustomer(customer: CustomerInterface): Promise<void> {
     this.addingCustomer.set(true);
@@ -22,8 +20,9 @@ export class FirestoreService {
       const newCustomer = {...customer, createdAt: Timestamp.now()};
       await addDoc(this.customersListCollection, newCustomer);
       console.log('Пользователь успешно добавлен');
-    } catch (err) {
-      this.errorService.setError(err instanceof Error ? err : new Error(String(err)));
+    } catch (error) {
+      console.error('Ошибка при добавлении данных пользователя:', error);
+      throw error;
     } finally {
       this.addingCustomer.set(false);
     }
@@ -34,8 +33,9 @@ export class FirestoreService {
       const customerDoc = doc(this.firestore, `customersList/${id}`);
       await updateDoc(customerDoc, updatedCustomer);
       console.log('Данные клиента успешно обновлены');
-    } catch (err) {
-      this.errorService.setError(err instanceof Error ? err : new Error(String(err)));
+    } catch (error) {
+      console.error('Ошибка при обновлении данных клиента:', error);
+      throw error;
     }
   }
 
@@ -44,8 +44,9 @@ export class FirestoreService {
       const customerDoc = doc(this.firestore, `customersList/${id}`);
       await deleteDoc(customerDoc);
       console.log(`Клиент с ID ${id} успешно удалён`);
-    } catch (err: any) {
-      this.errorService.setError(err instanceof Error ? err : new Error(String(err)));
+    } catch (error) {
+      console.error(`Ошибка при удалении клиента с ID ${id}:`, error);
+      throw error;
     }
   }
 
@@ -53,17 +54,16 @@ export class FirestoreService {
     const customerQuery = query(this.customersListCollection, orderBy('createdAt', 'asc'));
 
     onSnapshot(customerQuery, (snapshot) => {
-        const customers = snapshot.docs.map((doc) => {
-          const data = doc.data() as CustomerInterface;
-          return {
-            id: doc.id, ...data, createdAt: data.createdAt ? data.createdAt.toDate() : new Date(0),
-          };
-        });
-        this.customersList.set(customers);
-      }, (error) => {
-        console.error('Ошибка при получении данных клиентов:', error);
-      }
-    );
+      const customers = snapshot.docs.map((doc) => {
+        const data = doc.data() as CustomerInterface;
+        return {
+          id: doc.id, ...data, createdAt: data.createdAt ? data.createdAt.toDate() : new Date(0),
+        };
+      });
+      this.customersList.set(customers);
+    }, (error) => {
+      console.error('Ошибка при получении данных клиентов:', error);
+    });
   }
 
 

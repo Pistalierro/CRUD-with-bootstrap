@@ -4,8 +4,7 @@ import {provideRouter} from '@angular/router';
 import {routes} from './app.routes';
 import {getFirestore, provideFirestore} from '@angular/fire/firestore';
 import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
-import {ErrorSignalService} from './services/error-signal.service';
-import {GlobalErrorHandler} from './mock/global-error-handler';
+
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBudgE5GM1IQtE6dsLmckd_I9zZiht8VV8',
@@ -23,6 +22,5 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    {provide: ErrorSignalService, useClass: GlobalErrorHandler},
   ]
 };

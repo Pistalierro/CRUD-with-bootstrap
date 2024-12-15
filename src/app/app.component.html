@@ -1,10 +1,5 @@
 <div class="container py-3">
 
-  <div *ngIf="errorService.error() !== null" class="alert alert-danger d-flex justify-content-between align-items-center">
-    <span>{{ errorService.error()?.message }}</span>
-    <button (click)="clearError()" aria-label="Close" class="btn-close" type="button"></button>
-  </div>
-
   <div class="row">
     <div class="col py-3">
       <h1>CRUD Application with Bootstrap</h1>
